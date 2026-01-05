@@ -1,0 +1,29 @@
+#Exception handling, try-except, raise, custom
+
+try:
+  print("Hello")
+except:
+  print("Something went wrong")
+else:
+  print("Nothing went wrong")
+
+
+def divide_numbers(i, j):
+  try:
+    result = i / j
+  except ZeroDivisionError:
+    return "Error: Division by zero is not allowed."
+  else:
+    return result
+i = int(input("Enter first number: "))
+j = int(input("Enter second number: "))
+print(divide_numbers(i, j))
+
+
+
+def check_positive_number(x):
+  if x < 0:
+    raise ValueError("Negative value provided")
+  return True
+x = int(input("Enter a positive number: "))
+print(check_positive_number(x))
