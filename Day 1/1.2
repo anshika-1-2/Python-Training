@@ -20,10 +20,24 @@ j = int(input("Enter second number: "))
 print(divide_numbers(i, j))
 
 
-
+x = int(input("Enter a positive number: "))
 def check_positive_number(x):
   if x < 0:
     raise ValueError("Negative value provided")
   return True
-x = int(input("Enter a positive number: "))
 print(check_positive_number(x))
+
+#User-defined Exception
+class AgeError(Exception):
+    pass
+
+age = int(input("Enter your age: "))
+def set(age):
+    if age < 0:
+        raise AgeError("Age cannot be negative.")
+    print(f"Age set to {age}")
+
+try:
+    set(age)
+except AgeError as e:
+    print(e)
