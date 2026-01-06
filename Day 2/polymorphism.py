@@ -40,3 +40,25 @@ class Cat(Animal):
 animals = [Dog(), Cat(), Animal()]
 for animal in animals:
     print(animal.sound())
+
+# Method Overriding
+class Animal:
+    def speak(self):
+        return "an animal."
+
+class Dog(Animal):
+    def speak(self):
+        return "woooooof"
+
+print(Dog().speak())
+
+class Cat:
+    def speak(self):
+        return "Meowwwwwww"
+
+def animal_speaks(animal):
+    return animal.speak()
+
+print(animal_speaks(Cat()))
+print(animal_speaks(Dog()))
+
