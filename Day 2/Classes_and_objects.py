@@ -7,7 +7,7 @@ class Dog:
         self.age = age  
 
 dog1 = Dog("Rockie", 6)  
-dog2 = Dog("Bo", 2)  
+dog2 = Dog("Bo", 3)  
 
 print(dog1.name, dog1.age, dog1.species)  
 print(dog2.name, dog2.age, dog2.species)  
