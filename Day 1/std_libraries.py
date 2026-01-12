@@ -1,0 +1,23 @@
+#standard libraries like: os, sys, random, etc.
+import os
+home = os.path.expanduser("~")
+files = os.listdir(home)
+os.makedirs(r"C:\temp\example", exist_ok=True)
+print(home, len(files))
+
+
+import sys
+print("Python", sys.version)
+if len(sys.argv) > 1:
+    print("Args:", sys.argv[1:])
+    
+    
+import random
+random.seed(0)
+print(random.randint(1, 10), random.choice(["a","b","c"]))
+
+from datetime import datetime, timedelta
+now = datetime.now()
+print(now.strftime("%Y-%m-%d %H:%M:%S"))
+print((now + timedelta(days=1)).date())
+
