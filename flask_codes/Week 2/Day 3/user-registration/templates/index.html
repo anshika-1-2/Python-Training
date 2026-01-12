@@ -1,0 +1,27 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Home</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 2rem; }
+    a.button { display:inline-block; padding:0.6rem 1rem; background:#1f6feb; color:#fff; text-decoration:none; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <h1>Welcome</h1>
+
+  <div class="messages">
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% if msgs %}
+        {% for category, msg in msgs %}
+          <div class="{{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <p><a class="button" href="{{ url_for('register_get') }}">Register a new user</a></p>
+</body>
+</html>
