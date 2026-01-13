@@ -1,144 +1,149 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, redirect, url_for, request, flash
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# Initialize Flask app
+
+class Config:
+    SECRET_KEY = 'super-secret-key'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:anshi@localhost:5432/flask_auth_db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:anshi@localhost/db_flask_sample'
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECRET_KEY"] = "supersecretkey"
+app.config.from_object(Config)
 
-# Initialize database and login manager
 db = SQLAlchemy(app)
+
 login_manager = LoginManager()
+login_manager.login_view = 'login'
 login_manager.init_app(app)
-login_manager.login_view = "login"
 
-# User model
-class Users(UserMixin, db.Model):
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(250), unique=True, nullable=False)
-    password = db.Column(db.String(250), nullable=False)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
 
-# Create database
-with app.app_context():
-    db.create_all()
-
-# Load user for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
     """
-    Loads a user by user_id for Flask-Login.
+    Loads a user object given an ID
 
-    Returns:
-        Users: The user object if found, otherwise None.
+    :param user_id: The ID of the user to load
+    :type user_id: int
+    :return: The user object, or None if no user is found
+    :rtype: User
     """
-    return Users.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
-# Home route
-@app.route("/")
-def home():
-    """
-    Renders the home.html template.
 
-    Returns:
-        str: The rendered template as a string.
-    """
-    return render_template("home.html")
+with app.app_context():
+    db.create_all()
 
-# Register route
-@app.route('/register', methods=["GET", "POST"])
+
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     """
-    Handles both GET and POST requests to the '/register' path.
+    Handles registration of new users.
 
-    If a GET request is received, renders the 'sign_up.html' template.
+    GET requests will render the registration form.
 
-    If a POST request is received, extracts the username and password from the request form.
-    Validates the input, checking if the username is already taken.
-    If the input is invalid, flashes an error message and renders the 'sign_up.html' template.
-    If the input is valid, hashes the password using Werkzeug's generate_password_hash and stores the
-    user data in memory. Logs the registration and flashes a success message, then redirects the user back to the
-    login form.
+    POST requests will validate the input, check if the email is already registered, and if
+    so, flash an error message and redirect the user back to the registration form.
 
-    Returns:
-        str: The rendered template as a string.
+    If the email is not already registered, the user data will be stored in the database, and a
+    success message will be flashed, then the user will be redirected to the login page.
+
+    :return: The rendered template, or the redirected URL as a string
+    :rtype: str
     """
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
 
-        if Users.query.filter_by(username=username).first():
-            return render_template("sign_up.html", error="Username already taken!")
+        if User.query.filter_by(email=email).first():
+            flash('Email already registered')
+            return redirect(url_for('register'))
 
-        hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
+        hashed_password = generate_password_hash(password)
 
-        new_user = Users(username=username, password=hashed_password)
+        new_user = User(
+            username=username,
+            email=email,
+            password=hashed_password
+        )
+
         db.session.add(new_user)
         db.session.commit()
 
-        return redirect(url_for("login"))
-    
-    return render_template("sign_up.html")
+        flash('Registration successful. Please login.')
+        return redirect(url_for('login'))
 
-# Login route
-@app.route("/login", methods=["GET", "POST"])
+    return render_template('register.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Handles both GET and POST requests to the "/login" path.
+    Handles GET and POST requests to the "/login" path.
 
-    If a GET request is received, renders the "login.html" template.
+    GET requests will render the login form.
 
-    If a POST request is received, extracts the username and password from the request form.
-    Validates the input, checking for empty values, invalid username, and mismatched password.
-    If the input is invalid, flashes an error message and renders the "login.html" template.
-    If the input is valid, logs the user in using Flask-Login and redirects the user to the dashboard page.
+    POST requests will validate the input, check if the email and password are correct, and if
+    so, log the user in, then redirect the user to the dashboard page.
 
-    Returns:
-        str: The rendered template as a string.
+    If the email or password are incorrect, flash an error message, and redirect the user back to the
+    login form.
+
+    :return: The rendered template, or the redirected URL as a string
+    :rtype: str
     """
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
 
-        user = Users.query.filter_by(username=username).first()
+        user = User.query.filter_by(email=email).first()
 
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for("dashboard"))
+            return redirect(url_for('dashboard'))
         else:
-            return render_template("login.html", error="Invalid username or password")
+            flash('Invalid email or password')
 
-    return render_template("login.html")
+    return render_template('login.html')
 
-# Protected dashboard route
-@app.route("/dashboard")
+
+@app.route('/dashboard')
 @login_required
 def dashboard():
     """
-    Renders the dashboard.html template, displaying the username of the currently
-    logged in user.
+    Renders the dashboard page, displaying the current user's information.
 
-    Returns:
-        str: The rendered template as a string.
+    :return: The rendered template as a string
+    :rtype: str
     """
+    return render_template('dashboard.html', user=current_user)
 
-    return render_template("dashboard.html", username=current_user.username)
 
-# Logout route
-@app.route("/logout")
+@app.route('/logout')
 @login_required
 def logout():
     """
-    Logs the user out of the system and redirects them to the home page.
+    Logs the user out, and redirects them back to the login page.
 
-    Returns:
-        str: The redirected URL as a string.
+    :return: The redirected URL as a string
+    :rtype: str
     """
     logout_user()
-    return redirect(url_for("home"))
+    return redirect(url_for('login'))
 
-if __name__ == "__main__":
+@app.route('/')
+def home():
+    """Redirects to the login page."""
+    return redirect(url_for('login'))
+
+if __name__ == '__main__':
     app.run(debug=True)
-    

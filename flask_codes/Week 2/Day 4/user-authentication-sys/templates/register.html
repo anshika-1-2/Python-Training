@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Register</title>
 </head>
 <body>
 
-    <h2>User Login</h2>
+    <h2>User Registration</h2>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages() %}
@@ -20,16 +20,19 @@
     {% endwith %}
 
     <form method="POST">
+        <label>Username:</label><br>
+        <input type="text" name="username" required><br><br>
+
         <label>Email:</label><br>
         <input type="email" name="email" required><br><br>
 
         <label>Password:</label><br>
         <input type="password" name="password" required><br><br>
 
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
     </form>
 
-    <p>New user? <a href="/register">Register here</a></p>
+    <p>Already have an account? <a href="/login">Login</a></p>
 
 </body>
 </html>
