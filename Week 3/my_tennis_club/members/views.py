@@ -3,13 +3,14 @@ from django.template import loader
 
 def members(request):
   """
-  Returns a rendered HTML template for the members page.
+  Render the myfirst.html template.
 
-  Args:
-      request (django.http.request.HttpRequest): The incoming request.
+  This view function renders the myfirst.html template.
+  It takes a request object as an argument and returns
+  an HttpResponse object with the rendered template.
 
-  Returns:
-      django.http.response.HttpResponse: The rendered HTML template.
+  :param request: A request object from Django.
+  :return: An HttpResponse object with the rendered template.
   """
   template = loader.get_template('myfirst.html')
   return HttpResponse(template.render())
