@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4v5owyw4g$s+#q@dsw#v!bf7t_*4h16lx9!a&z1e2k8e5vijxf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'my_tennis_club.urls'
@@ -114,4 +115,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
+STATIC_ROOT = BASE_DIR / 'productionfiles'
+
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'mystaticfiles'
+]

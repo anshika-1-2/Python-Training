@@ -41,3 +41,17 @@ def main(request):
   """
   template = loader.get_template('main.html')
   return HttpResponse(template.render())
+
+
+def testing(request):
+  """
+  Displays a simple HTML page with a list of fruits.
+
+  :param request: The HTTP request object
+  :return: An HTTP response containing the rendered HTML page
+  """
+  template = loader.get_template('template.html')
+  context = {
+    'fruits': ['Apple', 'Banana', 'Cherry'],   
+  }
+  return HttpResponse(template.render(context, request))
