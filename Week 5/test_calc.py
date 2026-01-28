@@ -6,11 +6,11 @@ from calc import add
 
 class TestCalc(unittest.TestCase):
     def test_add(self):
-        result = add(2, 3)
-        self.assertEqual(result, 5)
         
-        
-        
+        self.assertEqual(add(2, 3), 5)
+
+        self.assertEqual(calc.add(2, -2), 0)
+
     def test_subtract(self):
         result = calc.subtract(5, 3)
         self.assertEqual(result, 2)
