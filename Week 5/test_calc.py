@@ -12,6 +12,7 @@ class TestCalc(unittest.TestCase):
         self.assertEqual(calc.add(2, -2), 0)
 
     def test_subtract(self):
+        """Test that subtract returns the correct result."""
         result = calc.subtract(5, 3)
         self.assertEqual(result, 2)
         
@@ -21,6 +22,8 @@ class TestCalc(unittest.TestCase):
         self.assertEqual(result, 12)
         
     def test_divide(self):
-        result = calc.divide(10, 2)
+        result = calc.divide(10, 1)
         self.assertEqual(result, 5)
+        self.assertRaises(ValueError, calc.divide, 10, 0)
+        
         
