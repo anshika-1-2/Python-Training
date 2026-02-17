@@ -68,3 +68,4 @@ if st.button("Predict Energy Consumption"):
     prediction = model.predict(input_data)[0]
 
     st.success(f"Predicted Next Hour Energy Consumption: {prediction:.2f} units")
+    
