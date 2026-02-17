@@ -85,10 +85,10 @@ y = df['EnergyConsumption']
 
 rf = RandomForestRegressor(
     n_estimators=500,
-    max_depth=8,              # restrict tree depth
-    min_samples_split=10,     # prevent small splits
-    min_samples_leaf=5,       # prevent tiny leaves
-    max_features="sqrt",      # reduce correlation
+    max_depth=8,              
+    min_samples_split=10,     
+    min_samples_leaf=5,       
+    max_features="sqrt",      
     random_state=42
 )
 
