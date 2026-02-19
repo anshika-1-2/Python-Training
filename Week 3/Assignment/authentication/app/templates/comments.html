@@ -1,0 +1,11 @@
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Post</button>
+</form>
+
+<hr>
+
+{% for c in comments %}
+<p><b>{{ c.user.username }}</b>: {{ c.text }}</p>
+{% endfor %}
